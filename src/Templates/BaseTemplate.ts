@@ -22,7 +22,7 @@ module BaseTemplate {
         create(cls: string): BaseObject
         list(): BaseObject[]
     }
-    export interface IWorld extends Utils.ChunkWorld {
+    export interface IWorld extends Utils.ChunkManager {
         getSeed(): number
         getWaterHeight(): number
         getHeight(x: number, y: number): number

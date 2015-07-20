@@ -16,9 +16,9 @@ var directionDown = new THREE.Vector3(0, -1, 0),
     shadowUpdaterRaycaster = new THREE.Raycaster()
 
 class ThreeCannonObject extends BaseObject {
-    // hookup the 'dettached' event to release resource
+    // hookup the 'detached' event to release resource
     trigger(type: string, data: any = null, callback: Function = null) {
-        if (type === 'dettached') {
+        if (type === 'detached') {
             this.resetBody()
             this.resetModel()
         }

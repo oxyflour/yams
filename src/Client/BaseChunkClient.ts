@@ -140,7 +140,7 @@ class Client {
     }
 
     protected initObjectEvents(objects: Objects) {
-        objects.on('attached dettached', (object: ThreeCannonObject) => {
+        objects.on('attached detached', (object: ThreeCannonObject) => {
             var chunkId = this.getChunkId(object)
             if (!this.hostingChunks[chunkId]) return
             this.socket && this.socket.broadcast('sync', chunkId,

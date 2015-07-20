@@ -34,7 +34,7 @@ class BaseObject implements Utils.IAnimateObject {
     }
     set attached(value: Utils.AnimateList) {
         this._attached = value
-        value ? this.trigger('attached') : this.trigger('dettached')
+        value ? this.trigger('attached') : this.trigger('detached')
     }
 
     //

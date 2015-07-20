@@ -282,7 +282,7 @@ export class Point {
     }
 }
 
-export class ChunkWorld {
+export class ChunkManager {
 	private chunkPositionCache = { }
 	private getChunkIndex(x: number) {
 	    return Math.floor(x / this.chunkSize + 0.5)

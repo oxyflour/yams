@@ -27,7 +27,7 @@ class TempObjects implements BaseTemplate.IObjects {
     }
 }
 
-class World extends Utils.ChunkWorld implements BaseTemplate.IWorld, TerrainObject.IChunkData {
+class World extends Utils.ChunkManager implements BaseTemplate.IWorld, TerrainObject.IChunkData {
     private seed: number
     private terrain: Terrain
     private templates: Templates

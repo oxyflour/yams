@@ -126,7 +126,7 @@ class SparsePlaneGeometry extends THREE.BufferGeometry {
 }
 
 class TerrainObject extends ThreeCannonObject {
-    static chunkManager: Utils.ChunkWorld
+    static chunkManager: Utils.ChunkManager
 
     hasBody = true
     chunkData: TerrainObject.IChunkData
@@ -436,7 +436,7 @@ class TerrainObject extends ThreeCannonObject {
 }
 
 module TerrainObject {
-    export interface IChunkData extends Utils.ChunkWorld {
+    export interface IChunkData extends Utils.ChunkManager {
         getWaterHeight(): number
         getGridSize(): number
         getTexture(chunkId: string): string
