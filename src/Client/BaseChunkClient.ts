@@ -4,7 +4,6 @@ import Utils = require('../Utils')
 import World = require('../World')
 import Objects = require('../Objects')
 
-import BaseChunkObject = require('../Objects/BaseChunkObject')
 import ThreeCannonObject = require('../Objects/ThreeCannonObject')
 import TerrainObject = require('../Objects/TerrainObject')
 
@@ -65,6 +64,11 @@ class ExtendedSocket {
     listeners(event: string): Function[] { return null }
     hasListeners(event: string): boolean { return null }
     connected: boolean;
+}
+
+interface BaseChunkObject extends ThreeCannonObject {
+    _chunkId: string
+    _lastPosition: THREE.Vector3
 }
 
 class Client {
@@ -137,22 +141,37 @@ class Client {
 
     protected initObjectEvents(objects: Objects) {
         objects.on('attached dettached', (object: ThreeCannonObject) => {
-            if (!this.hostingChunks[object.chunkId]) return
-            this.socket && this.socket.broadcast('sync', object.chunkId,
+            var chunkId = this.getChunkId(object)
+            if (!this.hostingChunks[chunkId]) return
+            this.socket && this.socket.broadcast('sync', chunkId,
                 this.getObjectSyncData(object))
         })
 
         objects.on('sync', (object: ThreeCannonObject, method: string) => {
             // TODO: access control
-            this.socket && this.socket.broadcast('sync', object.chunkId,
+            var chunkId = this.getChunkId(object)
+            this.socket && this.socket.broadcast('sync', chunkId,
                 this.getObjectSyncData(object, method))
         })
+    }
+
+    protected getChunkId(object: ThreeCannonObject): string {
+        var obj = <BaseChunkObject> object
+        if (!obj._lastPosition) {
+            obj._lastPosition = new THREE.Vector3(Infinity)
+        }
+        if (!obj._lastPosition.equals(obj.position)) {
+            obj._lastPosition.copy(obj.position)
+            obj._chunkId = this.world.getChunkId(obj.position.x, obj.position.z)
+        }
+        return obj._chunkId
     }
 
     protected getChunkObjectsData(chunkId: string) {
         var list = [ ]
         this.objects.apply((object: ThreeCannonObject) => {
-            if (object.chunkId === chunkId && !object.dontSyncInChunk)
+            if (this.getChunkId(object) === chunkId &&
+                !(<Client.ChunkObject> object).dontSyncInChunk)
                 list.push(object.sync())
         })
         return {
@@ -226,28 +245,25 @@ class Client {
     }
 
     private renderObject(object: ThreeCannonObject, camera: THREE.Camera) {
-        if (object.keepVisibleInChunk)
+        if ((<Client.ChunkObject> object).keepVisibleInChunk)
             return object.render(camera)
 
-        var chunkId = object.chunkId
-        if (!this.visibleChunks[chunkId] && object.model)
-            object.resetModel()
-
+        var chunkId = this.getChunkId(object)
         // only render visible objects
         if (this.visibleChunks[chunkId])
             object.render(camera)
+        else if (object.model)
+            object.resetModel()
     }
 
     private runObject(object: ThreeCannonObject, dt: number) {
-        var chunkId = object.chunkId
-        if (!this.hostingChunks[chunkId] &&
-            !this.activeChunks[chunkId])
-            object.finished = true
-
+        var chunkId = this.getChunkId(object)
         // only render active objects
         if (this.activeChunks[chunkId] ||
             this.hostingChunks[chunkId])
             object.run(dt)
+        else
+            object.finished = true
     }
 
     constructor(scene: THREE.Scene) {
@@ -266,7 +282,7 @@ class Client {
             next => {
                 World.connect(worldUrl, world => {
                     if (this.world) return next()
-                    BaseChunkObject.chunkManager = this.world = world
+                    TerrainObject.chunkManager = this.world = world
                     console.log('[C] connected to world server')
                     next()
                 })
@@ -353,6 +369,13 @@ class Client {
             else if (this.serverId !== data.serverId)
                 global.location && location.reload()
         })
+    }
+}
+
+module Client {
+    export interface ChunkObject extends ThreeCannonObject {
+        dontSyncInChunk: boolean
+        keepVisibleInChunk: boolean
     }
 }
 

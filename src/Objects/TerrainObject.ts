@@ -1,6 +1,5 @@
 import Utils = require('../Utils')
 
-import BaseChunkObject = require('./BaseChunkObject');
 import ThreeCannonObject = require('./ThreeCannonObject')
 
 var noisejs = global.Noise ? global : require('noisejs')
@@ -127,6 +126,8 @@ class SparsePlaneGeometry extends THREE.BufferGeometry {
 }
 
 class TerrainObject extends ThreeCannonObject {
+    static chunkManager: Utils.ChunkWorld
+
     hasBody = true
     chunkData: TerrainObject.IChunkData
 
@@ -137,9 +138,9 @@ class TerrainObject extends ThreeCannonObject {
 
     constructor(id, events, physics, scene) {
         super(id, events, physics, scene)
-        var size = BaseChunkObject.chunkManager.getChunkSize()
+        var size = TerrainObject.chunkManager.getChunkSize()
         this.size.set(size, size, 20)
-        var pos = BaseChunkObject.chunkManager.getChunkPos(this.id)
+        var pos = TerrainObject.chunkManager.getChunkPos(this.id)
         this.position.set(pos.x, 0, pos.y)
         var dirX = new THREE.Vector3(1, 0, 0)
         this.quaternion.setFromAxisAngle(dirX, -Math.PI / 2)

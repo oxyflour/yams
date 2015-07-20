@@ -109,6 +109,7 @@ class TerrainBrush extends ThreeCannonObject implements UiObject.IEditableObject
     }
 
     pathPoints: THREE.Vector3[] = [ ]
+    keepVisibleInChunk = false
 
     onMouseControlDown() {
         this.keepVisibleInChunk = true

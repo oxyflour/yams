@@ -119,7 +119,7 @@ class Client extends BaseClient {
         })
 
         socket.on('count-class', (data, callback) => {
-            var checkChunkId = (object: ThreeCannonObject) => object.chunkId === data.chunkId
+            var checkChunkId = (object: ThreeCannonObject) => this.getChunkId(object) === data.chunkId
             if (data && data.cls && callback)
                 callback(this.objects.cls(data.cls).filter(checkChunkId).length)
         })
@@ -154,11 +154,11 @@ class Client extends BaseClient {
         objects.on('chunk-loaded', (object: TerrainObject) => {
             // set objects above the terrain
             objects.apply((obj: ThreeCannonObject) => {
-                if (obj.chunkId !== object.id || obj.id === object.id) return
+                if (this.getChunkId(obj) !== object.id || obj.id === object.id) return
                 var pos = obj.position,
                     height = this.world.getHeight(pos.x, pos.z)
                 if ((obj.mass > 0 && pos.y - obj.size.y / 2 < height) ||
-                    (obj.mass == 0 && obj.keepOnTerrain)) {
+                    (obj.mass == 0 && (<Client.ChunkObject> obj).keepOnTerrain)) {
                     obj.setBottomPosition(pos.x, height, pos.z)
                     obj.body && obj.body.velocity.set(0, 0, 0)
                 }
@@ -281,8 +281,9 @@ class Client extends BaseClient {
 
     private initPlayerEvents(objects: Objects) {
         objects.on('player-update', (object: ThreeCannonObject) => {
+            var chunkId = this.getChunkId(object)
             if (!this.playerObject || this.playerObject.id !== object.id) return
-            this.socket && this.socket.broadcast('sync', object.chunkId,
+            this.socket && this.socket.broadcast('sync', chunkId,
                 this.getObjectSyncData(object))
         })
 
@@ -319,7 +320,7 @@ class Client extends BaseClient {
                     this.trigger('player-talk', result => {
                         talkable.isTalking = false
                     })
-                    this.socket.broadcast('sync', objc.chunkId,
+                    this.socket.broadcast('sync', this.getChunkId(objc),
                         this.getObjectSyncData(objc))
                     return true
                 }
@@ -329,7 +330,8 @@ class Client extends BaseClient {
 
     private initMonsterEvents(objects: Objects) {
         objects.on('monster-think', (object: ThreeCannonObject) => {
-            if (!this.hostingChunks[object.chunkId]) return
+            var chunkId = this.getChunkId(object)
+            if (!this.hostingChunks[chunkId]) return
             var r = Math.random(),
                 s: Utils.StateMachine = object['state']
             if (r > 0.5) {
@@ -343,12 +345,13 @@ class Client extends BaseClient {
             else {
                 s.set('IdleState')
             }
-            this.socket.broadcast('sync', object.chunkId,
+            this.socket.broadcast('sync', chunkId,
                 this.getObjectSyncData(object))
         })
 
         objects.on('monster-respawn', (object: ThreeCannonObject) => {
-            if (!this.hostingChunks[object.chunkId]) return
+            var chunkId = this.getChunkId(object)
+            if (!this.hostingChunks[chunkId]) return
             var pos = object.position,
                 size = this.world.getChunkSize(),
                 chunkIds = this.world.getChunkInCircle(pos.x, pos.z, size * 2.1),
@@ -393,9 +396,10 @@ class Client extends BaseClient {
     }
 
     commitObject(id: string) {
-        var object = <ThreeCannonObject> this.objects.get(id)
+        var object = <ThreeCannonObject> this.objects.get(id),
+            chunkId = this.getChunkId(object)
         if (object) {
-            this.socket.broadcast('sync', object.chunkId,
+            this.socket.broadcast('sync', chunkId,
                 this.getObjectSyncData(object))
         }
     }
@@ -407,6 +411,14 @@ class Client extends BaseClient {
                     this.getChunkObjectsData(chunkId), <any> next)
             }
         }), callback)
+    }
+}
+
+module Client {
+    export interface ChunkObject extends BaseClient.ChunkObject {
+        uiUneditable: boolean
+        keepOnTerrain: boolean
+        visibleGodModeOnly: boolean
     }
 }
 

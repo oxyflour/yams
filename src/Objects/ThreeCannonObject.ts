@@ -1,6 +1,6 @@
 /// <reference path="../../ref/cannon.d.ts/cannon.d.ts" />
 
-import BaseChunkObject = require('./BaseChunkObject')
+import BaseObject = require('./BaseObject')
 import Utils = require('../Utils')
 
 var directionDown = new THREE.Vector3(0, -1, 0),
@@ -15,7 +15,7 @@ var directionDown = new THREE.Vector3(0, -1, 0),
 
     shadowUpdaterRaycaster = new THREE.Raycaster()
 
-class ThreeCannonObject extends BaseChunkObject {
+class ThreeCannonObject extends BaseObject {
     // hookup the 'dettached' event to release resource
     trigger(type: string, data: any = null, callback: Function = null) {
         if (type === 'dettached') {
@@ -30,9 +30,10 @@ class ThreeCannonObject extends BaseChunkObject {
     //
     age = 0
     size = new THREE.Vector3(0.5, 0.5, 0.5)
+    position = new THREE.Vector3()
     quaternion = new THREE.Quaternion()
 
-    static syncs = BaseChunkObject.syncs.concat([
+    static syncs = BaseObject.syncs.concat([
         ThreeCannonObject.createSimpleSyncFn('age'),
         ThreeCannonObject.createTHREEArraySyncFn('position'),
         ThreeCannonObject.createTHREEArraySyncFn('quaternion'),
