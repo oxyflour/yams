@@ -1,0 +1,36 @@
+{
+  "name": "yaos",
+  "version": "0.0.0",
+  "description": "Yet Another Open-world Sandbox",
+  "author": "oxyflour",
+  "private": true,
+  "license": "BSD-2-Clause",
+  "dependencies": {
+    "express": "latest",
+    "body-parser": "latest",
+    "nedb": "latest",
+    "socket.io": "latest",
+    "socket.io-client": "latest",
+    "superagent": "0.9.0",
+    "cannon": "latest",
+    "three": "latest",
+    "noisejs": "latest",
+    "mkdirp": "latest",
+    "jsdom": "3.1.2",
+    "crc-32": "latest"
+  },
+  "devDependencies": {
+    "typescript": "latest",
+    "forever": "latest",
+    "browserify": "latest"
+  },
+  "scripts": {
+    "build":    "./build.sh",
+    "stop":     "forever stop server.js || echo 'INFO: server is not running'",
+    "forever":  "npm run stop && npm run build && forever start server.js",
+    "start":    "npm run stop && npm run build && node server.js",
+    "debug":    "npm run stop && npm run build && node-debug --web-host 0.0.0.0 server.js",
+    "clean":    "npm run stop && rm -rf world/*.db && npm run forever",
+    "reset":    "npm run stop && rm -rf world/* && npm run forever"
+  }
+}

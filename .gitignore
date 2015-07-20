@@ -1,0 +1,10 @@
+node_modules/
+
+# build folder
+build/
+
+# too many files
+html/models/
+
+# database folder
+world/

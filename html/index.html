@@ -1,0 +1,428 @@
+<!doctype html>
+<html>
+<head>
+<style>
+	body, html {
+		margin: 0;
+		padding: 0;
+		width: 100%;
+		height: 100%;
+		overflow: hidden;
+	}
+	.hidden {
+		display: none;
+	}
+	.float-right {
+		float: right;
+	}
+	.button {
+		cursor: pointer;
+		padding: 0 0.5em;
+	}
+</style>
+<style>
+	#statics {
+		position: absolute;
+		left: 5px;
+		top: 5px;
+		background: rgba(255, 255, 255, 0.6);
+		padding: 5px;
+		font-size: 60%;
+		color: #888;
+	}
+</style>
+<style>
+	#ui {
+		display: none;
+		font-size: 85%;
+	}
+	body.ui-open #ui,
+	#ui.e .equip,
+	#ui.u .use,
+	#ui.t .talk {
+		display: block;
+	}
+	#ui > * {
+		position: absolute;
+		left: 10%;
+		top: 10%;
+		right: 10%;
+		bottom: 10%;
+		background: rgba(255, 255, 255, 0.8);
+	}
+	#ui .talk {
+		top: 60%;
+	}
+	#ui .talk label {
+		display: block;
+		cursor: pointer;
+	}
+
+	.equip .top {
+		box-sizing: border-box;
+		position: absolute;
+		width: 100%;
+		height: 2.5em;
+		line-height: 2.5em;
+	}
+	.equip .select-equip-tab {
+		margin: 0 0.5em;
+	}
+	.equip .bottom {
+		box-sizing: border-box;
+		padding: 2.5em 5px 5px 5px;
+		height: 100%;
+	}
+	.equip .content {
+		height: 100%;
+		overflow: auto;
+	}
+
+	.talk .content {
+		margin: 5px;
+	}
+</style>
+<style>
+	#info {
+		position: absolute;
+		right: 5px;
+		top: 5px;
+		padding: 5px;
+		background: rgba(255, 255, 255, 0.6);
+		font-size: 60%;
+		color: #888;
+		display: none;
+	}
+	body.info-open #info {
+		display: block;
+	}
+</style>
+<link rel="stylesheet" type="text/css"
+	href="http://apps.bdimg.com/libs/bootstrap-glyphicons/1.0/css/bootstrap-glyphicons.css" />
+</head>
+<body>
+
+<div id="statics">
+	<div>Ping/Fps: <span class="ping-fps">?</span></div>
+	<div>Objects: <span class="objects">?</span></div>
+</div>
+
+<div id="info">
+	<div>
+		<span class="button btn-close float-right glyphicon glyphicon-remove"></span>
+		<span class="button btn-translate glyphicon glyphicon-move"></span>
+		<span class="button btn-rotate glyphicon glyphicon-repeat"></span>
+		<span class="button btn-scale glyphicon glyphicon-resize-full"></span>
+		<span class="button btn-remove glyphicon glyphicon-trash"></span>
+	</div>
+	<div class="cls"></div>
+	<div class="id"></div>
+	<div class="position"></div>
+	<div class="biome"></div>
+	<div class="object-ui"></div>
+</div>
+
+<div id="ui">
+	<div class="hidden equip">
+		<div class="top">
+			<select class="select-equip-tab" select-target=".equip .bottom">
+				<option>equip...</option>
+				<option>config...</option>
+				<option class="god-mode-only">create...</option>
+				<option class="god-mode-only">import...</option>
+			</select>
+			<span class="button float-right btn-close">[ Close ]</span>
+			<span class="button float-right btn-save">[ Save ]</span>
+		</div>
+		<div class="bottom">
+			<div class="content">
+				<p>Equipments will be listed here</p>
+			</div>
+			<form class="content" method="get">
+				<p><b>Graphic Settings</b></p>
+				<p>
+					<label>
+						<input type="checkbox" name="enableShadow"
+							class="checkbox-config-enable-shadow" />
+						Enable Shadow
+					</label>
+				</p>
+				<button class="btn-save-settings">Save &amp; Apply</button>
+				<p><b>Game Play</b></p>
+				<p>
+					<label>
+						<input type="checkbox" checked="true"
+							class="checkbox-config-god-mode" />
+						God Mode
+					</label>
+				</p>
+			</form>
+			<div class="content">
+				<p>
+					<select select-target=".equip .create-form">
+						<option>Static Objects</option>
+						<option>WarCraft3 Objects</option>
+						<option>THD Characters</option>
+						<option>Animals</option>
+						<option>Entities</option>
+					</select>
+				</p>
+				<div class="create-form">
+					<div>
+						<select>
+							<option create-class="TreeObject">Tree</option>
+						</select>
+						<button class="btn-create">Go</button>
+					</div>
+					<div>
+						<select>
+							<option size="1 10 1">AshenTree0</option>
+							<option size="1 10 1">AshenTree1</option>
+							<option size="1 10 1">AshenTree2</option>
+							<option size="1 10 1">AshenTree3</option>
+							<option size="1 10 1">AshenTree4</option>
+							<option size="1 10 1">AshenTree5</option>
+							<option size="1 10 1">AshenTree6</option>
+							<option size="1 10 1">AshenTree7</option>
+							<option size="1 10 1">AshenTree8</option>
+							<option size="1 10 1">AshenTree9</option>
+							<option size="5 8 5">VillageBuilding0</option>
+							<option size="4 15 4">VillageBuilding1</option>
+							<option size="4 10 4">VillageBuilding2</option>
+							<option size="3 5 3">SentinelStatue</option>
+							<option size="3 5 3">KeeperStatue</option>
+							<option size="15 8 10" create-class="ThdStaticAny">blsss_01</option>
+							<option size="10 8 10" create-class="ThdStaticAny">sssss_01</option>
+						</select>
+						<button class="btn-create" create-class="War3StaticAny">Go</button>
+					</div>
+					<div>
+						<select>
+							<option>alice</option>
+							<option>aya</option>
+							<option>bansheeranger</option>
+							<option>chen big</option>
+							<option>chen</option>
+							<option>cirno</option>
+							<option>daiyousei</option>
+							<option>devil doors</option>
+							<option>eirin</option>
+							<option>flandre maid</option>
+							<option>flandre</option>
+							<option>futatsuiwa mamizou</option>
+							<option>hakurei reimu futatsuiwa mamizou</option>
+							<option>hakurei reimu senior</option>
+							<option>hakurei reimu</option>
+							<option>hata no kokoro</option>
+							<option>himekaidou hatate miku</option>
+							<option>himekaidou hatate</option>
+							<option>hina</option>
+							<option>hiziri byakuren</option>
+							<option>horikawa raiko</option>
+							<option>houjuu nue exorcist</option>
+							<option>houjuu nue</option>
+							<option>ibara_kasen</option>
+							<option>iku</option>
+							<option>imaizumi kagerou horo</option>
+							<option>imaizumi kagerou</option>
+							<option>kaguya alice</option>
+							<option>kaguya</option>
+							<option>kanako small</option>
+							<option>kanako</option>
+							<option>kasodani kyouko</option>
+							<option>keine_2</option>
+							<option>keine</option>
+							<option>kisume attack on titan</option>
+							<option>kisume</option>
+							<option>koakuma</option>
+							<option>kogasa_garen</option>
+							<option>kogasa</option>
+							<option>komachi_sirius1</option>
+							<option>komachi_sirius</option>
+							<option>komachi</option>
+							<option>komeiji koishi cherry</option>
+							<option>komeiji koishi</option>
+							<option>koumajou densetsu flandre</option>
+							<option>koumajou densetsu youmu</option>
+							<option>kumoi</option>
+							<option>kurumi</option>
+							<option>letty</option>
+							<option>lily black</option>
+							<option>lily white</option>
+							<option>lunar child</option>
+							<option>lunasa prismriver</option>
+							<option>lyrica prismriver</option>
+							<option>marisa1</option>
+							<option>medicine</option>
+							<option>meirin4</option>
+							<option>meirin black</option>
+							<option>meirin hei-meiling</option>
+							<option>merlin prismriver</option>
+							<option>miko</option>
+							<option>mima</option>
+							<option>minamitsu bloodthirsty dark emperor</option>
+							<option>minamitsu</option>
+							<option>minoriko ex</option>
+							<option>minoriko</option>
+							<option>mizuhasi parsee</option>
+							<option>mokou</option>
+							<option>momizi</option>
+							<option>mononobe no futo</option>
+							<option>mop sakuya</option>
+							<option>mugetsu</option>
+							<option>mystia apron</option>
+							<option>mystia</option>
+							<option>nazrin</option>
+							<option>nedeathsmall</option>
+							<option>neutral_0</option>
+							<option>neutral_10</option>
+							<option>neutral_11</option>
+							<option>neutral_12</option>
+							<option>neutral_13</option>
+							<option>neutral_14</option>
+							<option>neutral_15</option>
+							<option>neutral_16</option>
+							<option>neutral_17</option>
+							<option>neutral_1</option>
+							<option>neutral_2</option>
+							<option>neutral_3</option>
+							<option>neutral_41</option>
+							<option>neutral_5</option>
+							<option>neutral_6</option>
+							<option>neutral_7</option>
+							<option>neutral_8</option>
+							<option>neutral_9</option>
+							<option>nitori</option>
+							<option>okazaki yumemi</option>
+							<option>patchouli</option>
+							<option>princess wriggle</option>
+							<option>qiming light</option>
+							<option>ran small</option>
+							<option>ran</option>
+							<option>reisen_2</option>
+							<option>reisen</option>
+							<option>reisen violent</option>
+							<option>remilia</option>
+							<option>rin</option>
+							<option>rumia ex</option>
+							<option>rumia</option>
+							<option>sakuya</option>
+							<option>sanae1</option>
+							<option>satori</option>
+							<option>satsuki rin</option>
+							<option>seiga kaku</option>
+							<option>seija kijin</option>
+							<option>sekibanki_head</option>
+							<option>sekibanki</option>
+							<option>shinki the god of destruction and regeneration</option>
+							<option>shinki</option>
+							<option>shizuha red</option>
+							<option>shizuha</option>
+							<option>siki eiki</option>
+							<option>soga no tojiko</option>
+							<option>soldiers far red</option>
+							<option>soldiers near red</option>
+							<option>soldiers siege red</option>
+							<option>star</option>
+							<option>student mokou</option>
+							<option>student sanae</option>
+							<option>student suwako</option>
+							<option>suika</option>
+							<option>sukuna shinmyoumaru</option>
+							<option>sunny milk</option>
+							<option>suwako_2</option>
+							<option>suwako big</option>
+							<option>suwako cherno alpha</option>
+							<option>suwako</option>
+							<option>tensi laurel</option>
+							<option>tensi</option>
+							<option>tokiko</option>
+							<option>toramaru_syou</option>
+							<option>tsukumo benben</option>
+							<option>tsukumo yatsuhashi</option>
+							<option>twei</option>
+							<option>unzan-1</option>
+							<option>usami renko</option>
+							<option>utsuho black rock shooter</option>
+							<option>utsuho</option>
+							<option>wakasagihime</option>
+							<option>wriggle</option>
+							<option>yamame attack on titan</option>
+							<option>yamame</option>
+							<option>yoshika miyako</option>
+							<option>youmu knife mad sword crazy</option>
+							<option>youmu</option>
+							<option>yukari</option>
+							<option>yuka</option>
+							<option>yuugi</option>
+							<option>yuyuko</option>
+						</select>
+						<button class="btn-create" create-class="ThdCharacterAny">Go</button>
+					</div>
+					<div>
+						<select>
+							<option size="1 1 1">Pig</option>
+							<option size="1 1 1">Sheep</option>
+						</select>
+						<button class="btn-create" create-class="War3AnimalAny">Go</button>
+					</div>
+					<div>
+						<select>
+							<option create-class="TriggerObject">TriggerObject</option>
+							<option create-class="TerrainBrush">TerrainBrush</option>
+							<option create-class="UiObject">EntityHelper</option>
+						</select>
+						<button class="btn-create">Go</button>
+					</div>
+				</div>
+			</div>
+			<div class="content">
+				<p><b>Import Heightmap</b></p>
+				<p>TODO</p>
+				<p><b>Import Collada Scene</b></p>
+				<p>TODO</p>
+			</div>
+		</div>
+	</div>
+	<div class="hidden use">
+		can i help you?
+	</div>
+	<div class="hidden talk">
+		<div class="content"> ... </div>
+	</div>
+</div>
+
+<script src="socket.io/socket.io.js"></script>
+
+<script src="js/build/superagent.js"></script>
+<script src="js/build/noise.js"></script>
+<script src="js/build/crc32.js"></script>
+
+<script src="js/build/cannon.min.js"></script>
+
+<script src="js/build/three.js"></script>
+<script src="js/build/CannonDebugRenderer.js"></script>
+
+<script src="js/controls/OrbitControls.js"></script>
+<script src="js/controls/TransformControls.js"></script>
+
+<script src="js/loaders/OBJLoader.js"></script>
+<script src="js/loaders/TGALoader.js"></script>
+<script src="js/loaders/MTLLoader.js"></script>
+<script src="js/loaders/OBJMTLLoader.js"></script>
+<script src="js/loaders/ColladaLoader.js"></script>
+
+<script src="js/fonts/helvetiker_regular.typeface.js"></script>
+
+<script src="js/extra/War3MdlLoader.js"></script>
+<script src="js/extra/TextureSplattingShader.js"></script>
+<script src="js/extra/SkyShader.js"></script>
+<script src="js/extra/three.animation.js"></script>
+
+<script src="http://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+<script src="http://apps.bdimg.com/libs/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+
+<script src="js/build/client.js"></script>
+
+</body>
+</html>
